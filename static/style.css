@@ -1,0 +1,178 @@
+:root{
+  --white:#ffffff;
+  --line:#e6e6e6;
+  --shadow: 0 12px 30px rgba(0,0,0,0.08);
+
+  --red:#e11d48;
+  --green:#16a34a;
+  --blue:#2563eb;
+  --yellow:#f59e0b;
+  --orange:#ea580c;
+  --purple:#7c3aed;
+
+  --text:#111827;
+  --muted:#6b7280;
+}
+
+*{ box-sizing:border-box; }
+body{ margin:0; font-family: "Segoe UI", Roboto, Arial, sans-serif; color:var(--text); }
+.bg-white{ background: var(--white); }
+
+.container{ max-width: 1100px; margin: 22px auto; padding: 0 16px; }
+
+.topbar{
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 16px 16px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+.actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+.h1{ font-size:24px; font-weight:900; letter-spacing:0.2px; }
+.h2{ font-size:18px; font-weight:850; margin-bottom:10px; }
+.muted{ color: var(--muted); }
+.small{ font-size:12px; }
+
+.card{
+  margin-top: 16px;
+  padding: 16px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:14px;
+  margin-top: 12px;
+}
+@media (max-width: 900px){ .grid2{ grid-template-columns: 1fr; } }
+
+.big-btn{
+  display:block;
+  text-decoration:none;
+  color: var(--text);
+  border:2px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  transition: transform .1s ease;
+}
+.big-btn:hover{ transform: translateY(-2px); }
+
+.big-title{ font-size:20px; font-weight:900; }
+.big-sub{ margin-top:6px; color: var(--muted); }
+
+.border-blue{ border-color: rgba(37,99,235,0.35); }
+.border-yellow{ border-color: rgba(245,158,11,0.35); }
+
+.tag{
+  display:inline-block;
+  margin-top:10px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  color:#fff;
+  font-weight:800;
+}
+.tag.green{ background: var(--green); }
+.tag.red{ background: var(--red); }
+
+.link-pill{
+  text-decoration:none;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  color: var(--text);
+  background:#fff;
+}
+.link-pill:hover{ border-color:#cfcfcf; }
+
+.row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top: 10px; }
+
+.btn{
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+  font-weight:850;
+}
+.btn:hover{ transform: translateY(-1px); }
+
+.blue-bg{ background: rgba(37,99,235,0.12); border-color: rgba(37,99,235,0.3); }
+.green-bg{ background: rgba(22,163,74,0.12); border-color: rgba(22,163,74,0.3); }
+.yellow-bg{ background: rgba(245,158,11,0.14); border-color: rgba(245,158,11,0.32); }
+.gray-bg{ background: rgba(107,114,128,0.10); border-color: rgba(107,114,128,0.26); }
+
+.blue{ color: var(--blue); }
+.green{ color: var(--green); }
+.red{ color: var(--red); }
+.orange{ color: var(--orange); }
+
+.media{
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  background:#f8fafc;
+}
+video{
+  width:100%;
+  height:360px;
+  object-fit:cover;
+  display:block;
+}
+@media (max-width: 900px){ video{ height:280px; } }
+
+.preview{
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  background:#f8fafc;
+}
+.preview img{
+  width:100%;
+  display:block;
+  min-height:240px;
+  object-fit:contain;
+  background:#f8fafc;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap:16px;
+}
+@media (max-width: 900px){ .result-grid{ grid-template-columns: 1fr; } }
+
+.label{ font-weight:900; margin-bottom:8px; }
+
+.pill{
+  display:inline-block;
+  margin: 6px 8px 0 0;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-weight:800;
+}
+
+.ok{ color: var(--green); font-weight:900; }
+
+.error{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(225,29,72,0.35);
+  background: rgba(225,29,72,0.08);
+  color: var(--red);
+  font-weight:900;
+}
+
+.hidden{ display:none !important; }
+
+.footer{ margin-top: 14px; text-align:center; }

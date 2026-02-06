@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Defect Classification - Upload</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-white">
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <div class="h1 orange">Upload Mode</div>
+        <div class="muted">Upload image → Detect → Output</div>
+      </div>
+      <div class="actions">
+        <a class="link-pill" href="/">Home</a>
+        <a class="link-pill" href="/webcam">Webcam Page</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="h2 blue">Upload Image</div>
+
+      <form id="uploadForm" class="row">
+        <input id="uploadFile" type="file" accept=".jpg,.jpeg,.png" required>
+        <button class="btn green-bg" type="submit">Detect</button>
+        <button id="btnReset" type="button" class="btn yellow-bg">Reset</button>
+      </form>
+
+      <div id="error" class="error hidden"></div>
+      <div class="muted small">Recommended: clear image, stable lighting, minimal blur.</div>
+    </div>
+
+    <div class="card">
+      <div class="h2 red">Result</div>
+
+      <div class="result-grid">
+        <div>
+          <div class="label">Detections</div>
+          <div id="detections" class="muted">No result yet.</div>
+        </div>
+
+        <div>
+          <div class="label">Annotated Output</div>
+          <div class="preview">
+            <img id="outImg" alt="Output will appear here"/>
+          </div>
+          <div id="outPath" class="muted small"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const uploadForm = document.getElementById("uploadForm");
+  const uploadFile = document.getElementById("uploadFile");
+  const outImg = document.getElementById("outImg");
+  const outPath = document.getElementById("outPath");
+  const detectionsEl = document.getElementById("detections");
+  const errorEl = document.getElementById("error");
+  const btnReset = document.getElementById("btnReset");
+
+  function showError(msg){
+    errorEl.textContent = msg;
+    errorEl.classList.remove("hidden");
+  }
+  function clearError(){
+    errorEl.textContent = "";
+    errorEl.classList.add("hidden");
+  }
+  function resetResult(){
+    clearError();
+    detectionsEl.textContent = "No result yet.";
+    outImg.removeAttribute("src");
+    outPath.textContent = "";
+    uploadFile.value = "";
+  }
+  function renderDetections(list){
+    if(!list || list.length === 0){
+      detectionsEl.innerHTML = "<span class='ok'>No defects detected</span>";
+      return;
+    }
+    detectionsEl.innerHTML = list.map(d =>
+      `<div class="pill">${d.label} <span class="muted small">(${d.confidence})</span></div>`
+    ).join("");
+  }
+  function renderOutput(url){
+    outImg.src = url + "?t=" + Date.now();
+    outPath.textContent = "Output: " + url;
+  }
+
+  btnReset.addEventListener("click", resetResult);
+
+  uploadForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearError();
+
+    if(!uploadFile.files || uploadFile.files.length === 0){
+      showError("Please choose an image.");
+      return;
+    }
+
+    try{
+      const form = new FormData();
+      form.append("file", uploadFile.files[0]);
+
+      const res = await fetch("/detect_upload", {method:"POST", body: form});
+      const data = await res.json();
+
+      if(!res.ok){
+        showError(data.error || "Detection failed");
+        return;
+      }
+
+      renderDetections(data.detections);
+      renderOutput(data.output_url);
+    }catch(e){
+      showError("Server/network error while detecting.");
+    }
+  });
+</script>
+</body>
+</html>
