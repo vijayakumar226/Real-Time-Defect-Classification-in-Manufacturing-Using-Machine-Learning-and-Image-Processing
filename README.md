@@ -33,4 +33,4 @@ This repository implements an automated quality control system for injection-mol
 1. Clone this repository:
    ```bash
    git clone <repository-url>
-   cd "web application"y for research or development, please cite the ICVADV-2026 publication.
+   cd "web application"y for research or development, please cite the ICVADV-2026 publication( https://ieeexplore.ieee.org/document/11470348 ).
