@@ -32,5 +32,5 @@ This repository implements an automated quality control system for injection-mol
 
 1. Clone this repository:
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/vijayakumar226/Real-Time-Defect-Classification-in-Manufacturing-Using-Machine-Learning-and-Image-Processing.git>
    cd "web application"y for research or development, please cite the ICVADV-2026 publication( https://ieeexplore.ieee.org/document/11470348 ).
