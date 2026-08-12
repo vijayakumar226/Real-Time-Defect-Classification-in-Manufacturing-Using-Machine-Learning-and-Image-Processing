@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Defect Classification - Webcam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-white">
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <div class="h1 blue">Webcam Mode</div>
+        <div class="muted">Start camera → Capture & Detect</div>
+      </div>
+      <div class="actions">
+        <a class="link-pill" href="/">Home</a>
+        <a class="link-pill" href="/upload">Upload Page</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="h2 green">Camera</div>
+
+      <div class="media">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" class="hidden"></canvas>
+      </div>
+
+      <div class="row">
+        <button id="btnStart" class="btn blue-bg">Start</button>
+        <button id="btnStop" class="btn gray-bg">Stop</button>
+        <button id="btnCapture" class="btn green-bg">Capture & Detect</button>
+        <button id="btnReset" class="btn yellow-bg">Reset</button>
+      </div>
+
+      <div id="camStatus" class="muted">Camera status: not started</div>
+      <div id="error" class="error hidden"></div>
+    </div>
+
+    <div class="card">
+      <div class="h2 orange">Result</div>
+      <div class="result-grid">
+        <div>
+          <div class="label">Detections</div>
+          <div id="detections" class="muted">No result yet.</div>
+        </div>
+
+        <div>
+          <div class="label">Annotated Output</div>
+          <div class="preview">
+            <img id="outImg" alt="Output will appear here"/>
+          </div>
+          <div id="outPath" class="muted small"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const btnStart = document.getElementById("btnStart");
+  const btnStop = document.getElementById("btnStop");
+  const btnCapture = document.getElementById("btnCapture");
+  const btnReset = document.getElementById("btnReset");
+
+  const camStatus = document.getElementById("camStatus");
+  const outImg = document.getElementById("outImg");
+  const outPath = document.getElementById("outPath");
+  const detectionsEl = document.getElementById("detections");
+  const errorEl = document.getElementById("error");
+
+  let stream = null;
+
+  function showError(msg){
+    errorEl.textContent = msg;
+    errorEl.classList.remove("hidden");
+  }
+  function clearError(){
+    errorEl.textContent = "";
+    errorEl.classList.add("hidden");
+  }
+  function resetResult(){
+    clearError();
+    detectionsEl.textContent = "No result yet.";
+    outImg.removeAttribute("src");
+    outPath.textContent = "";
+  }
+  function renderDetections(list){
+    if(!list || list.length === 0){
+      detectionsEl.innerHTML = "<span class='ok'>No defects detected</span>";
+      return;
+    }
+    detectionsEl.innerHTML = list.map(d =>
+      `<div class="pill">${d.label} <span class="muted small">(${d.confidence})</span></div>`
+    ).join("");
+  }
+  function renderOutput(url){
+    outImg.src = url + "?t=" + Date.now();
+    outPath.textContent = "Output: " + url;
+  }
+
+  btnStart.addEventListener("click", async () => {
+    clearError();
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
+      video.srcObject = stream;
+      camStatus.textContent = "Camera status: running";
+    }catch(e){
+      showError("Camera permission denied / camera not available. Use Chrome/Edge and allow camera.");
+      camStatus.textContent = "Camera status: failed";
+    }
+  });
+
+  btnStop.addEventListener("click", () => {
+    clearError();
+    if(stream){
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
+      video.srcObject = null;
+      camStatus.textContent = "Camera status: stopped";
+    }
+  });
+
+  btnReset.addEventListener("click", resetResult);
+
+  btnCapture.addEventListener("click", async () => {
+    clearError();
+    if(!stream){
+      showError("Start the camera first.");
+      return;
+    }
+
+    const w = video.videoWidth || 640;
+    const h = video.videoHeight || 480;
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext("2d").drawImage(video, 0, 0, w, h);
+
+    canvas.toBlob(async (blob) => {
+      try{
+        const form = new FormData();
+        form.append("file", blob, "frame.jpg");
+
+        const res = await fetch("/detect_frame", {method:"POST", body: form});
+        const data = await res.json();
+
+        if(!res.ok){
+          showError(data.error || "Detection failed");
+          return;
+        }
+        renderDetections(data.detections);
+        renderOutput(data.output_url);
+      }catch(e){
+        showError("Server/network error while detecting.");
+      }
+    }, "image/jpeg", 0.92);
+  });
+</script>
+</body>
+</html>

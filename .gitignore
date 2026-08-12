@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# YOLO model & outputs
+*.pt
+outputs/
+runs/
+datasets/
+
+# Uploads
+uploads/
+
+# Virtual environment
+venv/
+.env/

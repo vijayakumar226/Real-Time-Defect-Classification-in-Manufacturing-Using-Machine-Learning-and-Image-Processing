@@ -1,0 +1,4 @@
+web application for yolo
+
+cd E:\web application> app                     
+uvicorn app:app --reload
